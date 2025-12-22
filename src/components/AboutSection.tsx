@@ -1,0 +1,92 @@
+import { Shield, Brain, Scale, Lock } from 'lucide-react';
+
+const AboutSection = () => {
+  const highlights = [
+    {
+      icon: Brain,
+      label: 'AI Systems',
+      description: 'GPT-4, Claude, Llama, Mistral',
+    },
+    {
+      icon: Scale,
+      label: 'Policy Frameworks',
+      description: 'NIST AI RMF, FERPA, Title IX',
+    },
+    {
+      icon: Shield,
+      label: 'Governance',
+      description: 'Risk controls & compliance',
+    },
+    {
+      icon: Lock,
+      label: 'Security',
+      description: 'Pentesting & threat modeling',
+    },
+  ];
+
+  return (
+    <section id="about" className="py-24 md:py-32 relative">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(220_30%_12%)_0%,_transparent_70%)]" />
+      
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="max-w-6xl mx-auto">
+          {/* Section header */}
+          <div className="mb-16">
+            <span className="font-mono text-sm text-primary uppercase tracking-wider">About</span>
+            <h2 className="font-display text-4xl md:text-5xl font-medium mt-2">
+              Bridging Policy & Technology
+            </h2>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+            {/* Left column - text */}
+            <div className="space-y-6">
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                I'm a policy and applied AI researcher who turns governance frameworks into 
+                real, testable systems. With over 4 years of experience across federal agencies 
+                including DoD, DIA, DOE, and DLA, I specialize in converting compliance mandates 
+                into deployable AI prototypes, dashboards, and security-validated risk controls.
+              </p>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                My work sits at the intersection of public sector research, regulatory analysis, 
+                and hands-on LLM engineering. I believe in building AI systems that are not just 
+                powerful, but accountable, auditable, and aligned with public interest.
+              </p>
+              <div className="pt-4">
+                <a 
+                  href="#contact"
+                  className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
+                >
+                  Let's work together
+                  <span className="text-lg">→</span>
+                </a>
+              </div>
+            </div>
+
+            {/* Right column - highlights */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              {highlights.map((item, index) => (
+                <div
+                  key={item.label}
+                  className="card-glass rounded-lg p-6 hover:border-primary/30 transition-colors group"
+                >
+                  <item.icon 
+                    className="w-8 h-8 text-primary mb-4 group-hover:scale-110 transition-transform" 
+                  />
+                  <h3 className="font-display text-lg font-medium text-foreground mb-1">
+                    {item.label}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default AboutSection;
