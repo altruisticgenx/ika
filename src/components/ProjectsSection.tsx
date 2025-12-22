@@ -1,6 +1,10 @@
 import { ArrowUpRight, BarChart3, Bot, FileCheck, Cpu, Shield, Layers } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useScrollReveal, staggerContainerVariants, staggerItemVariants } from '@/hooks/useScrollReveal';
 
 const ProjectsSection = () => {
+  const { ref, isInView } = useScrollReveal(0.1);
+
   const projects = [
     {
       icon: BarChart3,
@@ -51,9 +55,15 @@ const ProjectsSection = () => {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_hsl(174_72%_50%_/_0.05)_0%,_transparent_50%)]" />
       
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-6xl mx-auto">
+        <motion.div 
+          ref={ref}
+          className="max-w-6xl mx-auto"
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          variants={staggerContainerVariants}
+        >
           {/* Section header */}
-          <div className="mb-16">
+          <motion.div className="mb-16" variants={staggerItemVariants}>
             <span className="font-mono text-sm text-primary uppercase tracking-wider">Work</span>
             <h2 className="font-display text-4xl md:text-5xl font-medium mt-2">
               Selected Projects
@@ -62,14 +72,19 @@ const ProjectsSection = () => {
               A selection of impactful projects across AI governance, compliance automation, 
               and public-sector technology.
             </p>
-          </div>
+          </motion.div>
 
           {/* Projects grid */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <motion.div 
+            className="grid md:grid-cols-2 gap-6"
+            variants={staggerContainerVariants}
+          >
             {projects.map((project, index) => (
-              <article
+              <motion.article
                 key={project.title}
                 className="card-glass rounded-lg p-6 md:p-8 hover:border-primary/30 transition-all group relative overflow-hidden"
+                variants={staggerItemVariants}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
               >
                 {/* Background decoration */}
                 <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
@@ -110,10 +125,10 @@ const ProjectsSection = () => {
                     ))}
                   </div>
                 </div>
-              </article>
+              </motion.article>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
