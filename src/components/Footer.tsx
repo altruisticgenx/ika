@@ -16,15 +16,15 @@ const Footer = () => {
           </p>
 
           {/* Links */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 sm:gap-6">
             <a
-              href="mailto:altruisticxai@gmail.com"
+              href="mailto:ingakaltak7@gmail.com"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Email
             </a>
             <a
-              href="https://linkedin.com"
+              href="https://www.linkedin.com/in/inga-kaltak"
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"

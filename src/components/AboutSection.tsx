@@ -29,10 +29,10 @@ const AboutSection = () => {
   ];
 
   return (
-    <section id="about" className="py-24 md:py-32 relative">
+    <section id="about" className="py-16 sm:py-24 md:py-32 relative">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(220_30%_12%)_0%,_transparent_70%)]" />
       
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <motion.div 
           ref={ref}
           className="max-w-6xl mx-auto"
@@ -41,28 +41,28 @@ const AboutSection = () => {
           variants={staggerContainerVariants}
         >
           {/* Section header */}
-          <motion.div className="mb-16" variants={staggerItemVariants}>
-            <span className="font-mono text-sm text-primary uppercase tracking-wider">About</span>
-            <h2 className="font-display text-4xl md:text-5xl font-medium mt-2">
+          <motion.div className="mb-10 sm:mb-16" variants={staggerItemVariants}>
+            <span className="font-mono text-xs sm:text-sm text-primary uppercase tracking-wider">About</span>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium mt-2">
               Bridging Policy & Technology
             </h2>
           </motion.div>
 
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16">
             {/* Left column - text */}
-            <motion.div className="space-y-6" variants={staggerItemVariants}>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+            <motion.div className="space-y-4 sm:space-y-6" variants={staggerItemVariants}>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                 I'm a policy and applied AI researcher who turns governance frameworks into 
                 real, testable systems. With over 4 years of experience across federal agencies 
                 including DoD, DIA, DOE, and DLA, I specialize in converting compliance mandates 
                 into deployable AI prototypes, dashboards, and security-validated risk controls.
               </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
                 My work sits at the intersection of public sector research, regulatory analysis, 
                 and hands-on LLM engineering. I believe in building AI systems that are not just 
                 powerful, but accountable, auditable, and aligned with public interest.
               </p>
-              <div className="pt-4">
+              <div className="pt-2 sm:pt-4">
                 <a 
                   href="#contact"
                   className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all"
@@ -75,22 +75,22 @@ const AboutSection = () => {
 
             {/* Right column - highlights */}
             <motion.div 
-              className="grid sm:grid-cols-2 gap-4"
+              className="grid grid-cols-2 gap-3 sm:gap-4"
               variants={staggerContainerVariants}
             >
-              {highlights.map((item, index) => (
+              {highlights.map((item) => (
                 <motion.div
                   key={item.label}
-                  className="card-glass rounded-lg p-6 hover:border-primary/30 transition-colors group"
+                  className="card-glass rounded-lg p-4 sm:p-6 hover:border-primary/30 transition-colors group"
                   variants={staggerItemVariants}
                 >
                   <item.icon 
-                    className="w-8 h-8 text-primary mb-4 group-hover:scale-110 transition-transform" 
+                    className="w-6 h-6 sm:w-8 sm:h-8 text-primary mb-3 sm:mb-4 group-hover:scale-110 transition-transform" 
                   />
-                  <h3 className="font-display text-lg font-medium text-foreground mb-1">
+                  <h3 className="font-display text-base sm:text-lg font-medium text-foreground mb-1">
                     {item.label}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     {item.description}
                   </p>
                 </motion.div>
