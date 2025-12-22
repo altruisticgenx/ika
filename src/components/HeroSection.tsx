@@ -1,9 +1,19 @@
 import { ArrowDown, Mail, Linkedin, FileText } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import { motion } from "framer-motion";
+
+// Lazy load WebGL component for performance
+const GovernanceLattice = lazy(() => import("./GovernanceLattice"));
 
 const HeroSection = () => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const [showLattice, setShowLattice] = useState(false);
+
+  // Delay WebGL load for initial paint performance
+  useEffect(() => {
+    const timer = setTimeout(() => setShowLattice(true), 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Lightweight 3D parallax (mobile-safe)
   useEffect(() => {
@@ -64,7 +74,12 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
+    <section className="min-h-screen flex items-center justify-center relative overflow-hidden pt-14 sm:pt-16">
+      {/* WebGL Governance Lattice */}
+      <Suspense fallback={null}>
+        {showLattice && <GovernanceLattice />}
+      </Suspense>
+
       {/* Ambient gradients */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(174_72%_50%_/_0.08)_0%,_transparent_50%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_hsl(220_40%_20%_/_0.3)_0%,_transparent_50%)]" />
@@ -137,24 +152,25 @@ const HeroSection = () => {
               variants={itemVariants}
             >
               <a
-                href="mailto:altruisticxai@gmail.com"
-                className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-5 py-3 text-primary-foreground font-medium transition-transform hover:scale-[1.02] glow-primary"
+                href="mailto:ingakaltak7@gmail.com"
+                className="inline-flex items-center justify-center gap-2 rounded-md bg-primary px-4 sm:px-5 py-2.5 sm:py-3 text-primary-foreground text-sm sm:text-base font-medium transition-transform hover:scale-[1.02] glow-primary"
               >
                 <Mail size={18} />
-                Contact
+                <span className="hidden sm:inline">Contact</span>
+                <span className="sm:hidden">Email</span>
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/inga-kaltak"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-3 border border-border text-foreground font-medium rounded-md hover:bg-secondary transition-colors"
+                className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 border border-border text-foreground text-sm sm:text-base font-medium rounded-md hover:bg-secondary transition-colors"
               >
                 <Linkedin size={18} />
                 LinkedIn
               </a>
               <a
                 href="#projects"
-                className="inline-flex items-center gap-2 px-5 py-3 border border-border text-foreground font-medium rounded-md hover:bg-secondary transition-colors"
+                className="inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 sm:py-3 border border-border text-foreground text-sm sm:text-base font-medium rounded-md hover:bg-secondary transition-colors"
               >
                 <FileText size={18} />
                 Work

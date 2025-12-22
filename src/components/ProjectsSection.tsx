@@ -51,10 +51,10 @@ const ProjectsSection = () => {
   ];
 
   return (
-    <section id="projects" className="py-24 md:py-32 relative">
+    <section id="projects" className="py-16 sm:py-24 md:py-32 relative">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_hsl(174_72%_50%_/_0.05)_0%,_transparent_50%)]" />
       
-      <div className="container mx-auto px-6 relative z-10">
+      <div className="container mx-auto px-4 sm:px-6 relative z-10">
         <motion.div 
           ref={ref}
           className="max-w-6xl mx-auto"
@@ -63,12 +63,12 @@ const ProjectsSection = () => {
           variants={staggerContainerVariants}
         >
           {/* Section header */}
-          <motion.div className="mb-16" variants={staggerItemVariants}>
-            <span className="font-mono text-sm text-primary uppercase tracking-wider">Work</span>
-            <h2 className="font-display text-4xl md:text-5xl font-medium mt-2">
+          <motion.div className="mb-10 sm:mb-16" variants={staggerItemVariants}>
+            <span className="font-mono text-xs sm:text-sm text-primary uppercase tracking-wider">Work</span>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium mt-2">
               Selected Projects
             </h2>
-            <p className="text-muted-foreground mt-4 max-w-2xl">
+            <p className="text-sm sm:text-base text-muted-foreground mt-3 sm:mt-4 max-w-2xl">
               A selection of impactful projects across AI governance, compliance automation, 
               and public-sector technology.
             </p>
@@ -76,39 +76,39 @@ const ProjectsSection = () => {
 
           {/* Projects grid */}
           <motion.div 
-            className="grid md:grid-cols-2 gap-6"
+            className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6"
             variants={staggerContainerVariants}
           >
             {projects.map((project, index) => (
               <motion.article
                 key={project.title}
-                className="card-glass rounded-lg p-6 md:p-8 hover:border-primary/30 transition-all group relative overflow-hidden"
+                className="card-glass rounded-lg p-5 sm:p-6 md:p-8 hover:border-primary/30 transition-all group relative overflow-hidden"
                 variants={staggerItemVariants}
                 whileHover={{ y: -4, transition: { duration: 0.2 } }}
               >
                 {/* Background decoration */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
+                <div className="absolute top-0 right-0 w-24 sm:w-32 h-24 sm:h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors" />
                 
                 <div className="relative">
                   {/* Header */}
-                  <div className="flex items-start justify-between mb-4">
-                    <project.icon className="w-10 h-10 text-primary" />
+                  <div className="flex items-start justify-between mb-3 sm:mb-4">
+                    <project.icon className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
                     <span className="font-mono text-xs text-muted-foreground">
                       {String(index + 1).padStart(2, '0')}
                     </span>
                   </div>
 
                   {/* Content */}
-                  <h3 className="font-display text-xl md:text-2xl font-medium text-foreground mb-3 group-hover:text-primary transition-colors">
+                  <h3 className="font-display text-lg sm:text-xl md:text-2xl font-medium text-foreground mb-2 sm:mb-3 group-hover:text-primary transition-colors">
                     {project.title}
                   </h3>
                   
-                  <p className="text-muted-foreground mb-4 leading-relaxed">
+                  <p className="text-sm sm:text-base text-muted-foreground mb-3 sm:mb-4 leading-relaxed">
                     {project.description}
                   </p>
 
                   {/* Highlight badge */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-full mb-4">
+                  <div className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-primary/10 border border-primary/20 rounded-full mb-3 sm:mb-4">
                     <ArrowUpRight className="w-3 h-3 text-primary" />
                     <span className="text-xs font-medium text-primary">{project.highlight}</span>
                   </div>
