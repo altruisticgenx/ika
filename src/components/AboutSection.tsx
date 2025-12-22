@@ -1,6 +1,10 @@
 import { Shield, Brain, Scale, Lock } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useScrollReveal, staggerContainerVariants, staggerItemVariants } from '@/hooks/useScrollReveal';
 
 const AboutSection = () => {
+  const { ref, isInView } = useScrollReveal(0.2);
+
   const highlights = [
     {
       icon: Brain,
@@ -29,18 +33,24 @@ const AboutSection = () => {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_hsl(220_30%_12%)_0%,_transparent_70%)]" />
       
       <div className="container mx-auto px-6 relative z-10">
-        <div className="max-w-6xl mx-auto">
+        <motion.div 
+          ref={ref}
+          className="max-w-6xl mx-auto"
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          variants={staggerContainerVariants}
+        >
           {/* Section header */}
-          <div className="mb-16">
+          <motion.div className="mb-16" variants={staggerItemVariants}>
             <span className="font-mono text-sm text-primary uppercase tracking-wider">About</span>
             <h2 className="font-display text-4xl md:text-5xl font-medium mt-2">
               Bridging Policy & Technology
             </h2>
-          </div>
+          </motion.div>
 
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
             {/* Left column - text */}
-            <div className="space-y-6">
+            <motion.div className="space-y-6" variants={staggerItemVariants}>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 I'm a policy and applied AI researcher who turns governance frameworks into 
                 real, testable systems. With over 4 years of experience across federal agencies 
@@ -61,14 +71,18 @@ const AboutSection = () => {
                   <span className="text-lg">→</span>
                 </a>
               </div>
-            </div>
+            </motion.div>
 
             {/* Right column - highlights */}
-            <div className="grid sm:grid-cols-2 gap-4">
+            <motion.div 
+              className="grid sm:grid-cols-2 gap-4"
+              variants={staggerContainerVariants}
+            >
               {highlights.map((item, index) => (
-                <div
+                <motion.div
                   key={item.label}
                   className="card-glass rounded-lg p-6 hover:border-primary/30 transition-colors group"
+                  variants={staggerItemVariants}
                 >
                   <item.icon 
                     className="w-8 h-8 text-primary mb-4 group-hover:scale-110 transition-transform" 
@@ -79,11 +93,11 @@ const AboutSection = () => {
                   <p className="text-sm text-muted-foreground">
                     {item.description}
                   </p>
-                </div>
+                </motion.div>
               ))}
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,4 +1,9 @@
+import { motion } from 'framer-motion';
+import { useScrollReveal, staggerContainerVariants, staggerItemVariants } from '@/hooks/useScrollReveal';
+
 const ExpertiseSection = () => {
+  const { ref, isInView } = useScrollReveal(0.15);
+
   const expertiseAreas = [
     {
       category: 'Policy & Public Sector Research',
@@ -60,9 +65,15 @@ const ExpertiseSection = () => {
   return (
     <section id="expertise" className="py-24 md:py-32 bg-secondary/20">
       <div className="container mx-auto px-6">
-        <div className="max-w-6xl mx-auto">
+        <motion.div 
+          ref={ref}
+          className="max-w-6xl mx-auto"
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          variants={staggerContainerVariants}
+        >
           {/* Section header */}
-          <div className="mb-16">
+          <motion.div className="mb-16" variants={staggerItemVariants}>
             <span className="font-mono text-sm text-primary uppercase tracking-wider">Expertise</span>
             <h2 className="font-display text-4xl md:text-5xl font-medium mt-2">
               Core Competencies
@@ -71,14 +82,18 @@ const ExpertiseSection = () => {
               A unique blend of policy research, AI engineering, and cybersecurity expertise 
               built through years of public-sector work.
             </p>
-          </div>
+          </motion.div>
 
           {/* Skills grid */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <motion.div 
+            className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+            variants={staggerContainerVariants}
+          >
             {expertiseAreas.map((area, index) => (
-              <div
+              <motion.div
                 key={area.category}
                 className="card-glass rounded-lg p-6 hover:border-primary/30 transition-all group"
+                variants={staggerItemVariants}
               >
                 <div className="flex items-start gap-3 mb-4">
                   <span className="font-mono text-xs text-primary opacity-60">
@@ -99,10 +114,10 @@ const ExpertiseSection = () => {
                     </li>
                   ))}
                 </ul>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );
