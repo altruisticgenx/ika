@@ -137,7 +137,7 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Experience */}
-            <motion.div variants={itemVariants}>
+            <motion.div variants={itemVariants} className="text-base">
               <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-4">
                 Experience with
               </p>
