@@ -1,159 +1,166 @@
-import { ArrowDown, Mail, Linkedin, FileText } from "lucide-react";
-import { useEffect, useRef, useState, lazy, Suspense } from "react";
-import { motion } from "framer-motion";
+"use client";
+import { Canvas, extend, Object3DNode } from "@react-three/fiber";
+import { Float } from "@react-three/drei";
+import { useMemo, useState, useEffect } from "react";
+import * as THREE from "three";
 
-// Lazy load WebGL component for performance
-const GovernanceLattice = lazy(() => import("./GovernanceLattice"));
-const HeroSection = () => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [showLattice, setShowLattice] = useState(false);
+// Extend Three. js Line for R3F
+extend({ Line_: THREE.Line });
 
-  // Delay WebGL load for initial paint performance
+declare module "@react-three/fiber" {
+  interface ThreeElements {
+    line_: Object3DNode<THREE.Line, typeof THREE.Line>;
+  }
+}
+
+// Utility to check WebGL availability
+function isWebGLAvailable(): boolean {
+  if (typeof window === "undefined") return false;
+  
+  try {
+    const canvas = document.createElement("canvas");
+    return ! !(
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl2") || canvas.getContext("webgl"))
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
+function GovernanceNode({ position }:  { position: [number, number, number] }) {
+  return (
+    <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.5}>
+      <mesh position={position}>
+        <icosahedronGeometry args={[0.4, 0]} />
+        <meshBasicMaterial 
+          color="#2dd4bf" 
+          wireframe 
+          transparent 
+          opacity={0.4}
+        />
+      </mesh>
+    </Float>
+  );
+}
+
+function ConnectionLine({ start, end }: { start: [number, number, number]; end: [number, number, number] }) {
+  const geometry = useMemo(() => {
+    const geo = new THREE.BufferGeometry();
+    const positions = new Float32Array([...start, ...end]);
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    return geo;
+  }, [start, end]);
+
+  return (
+    <line_ geometry={geometry}>
+      <lineBasicMaterial color="#2dd4bf" transparent opacity={0.15} />
+    </line_>
+  );
+}
+
+function LatticeNetwork() {
+  const nodes: [number, number, number][] = [
+    [-2, 1, -1],
+    [2, -1, -2],
+    [0, 2, -1.5],
+    [-1.5, -1.5, -1],
+    [1.5, 1.5, -2],
+    [-0.5, 0, -1],
+    [1, -0.5, -1.5],
+  ];
+
+  const connections: Array<[number, number]> = [
+    [0, 2], [0, 3], [0, 5],
+    [1, 3], [1, 6],
+    [2, 4], [2, 5],
+    [3, 5], [3, 6],
+    [4, 6], [5, 6],
+  ];
+
+  return (
+    <group>
+      {nodes.map((pos, i) => (
+        <GovernanceNode key={i} position={pos} />
+      ))}
+      {connections.map(([a, b], i) => (
+        <ConnectionLine
+          key={i}
+          start={nodes[a]}
+          end={nodes[b]}
+        />
+      ))}
+    </group>
+  );
+}
+
+// Fallback component for when WebGL is not available
+function FallbackLattice() {
+  return (
+    <div className="absolute inset-0 z-0 opacity-60 pointer-events-none flex items-center justify-center">
+      <svg width="200" height="200" viewBox="0 0 200 200" className="opacity-30">
+        <defs>
+          <pattern id="lattice-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="40" y2="40" stroke="#2dd4bf" strokeWidth="0.5" opacity="0.3" />
+            <line x1="40" y1="0" x2="0" y2="40" stroke="#2dd4bf" strokeWidth="0.5" opacity="0.3" />
+          </pattern>
+        </defs>
+        <rect width="200" height="200" fill="url(#lattice-pattern)" />
+        <circle cx="100" cy="100" r="30" fill="none" stroke="#2dd4bf" strokeWidth="1" opacity="0.4" />
+      </svg>
+    </div>
+  );
+}
+
+export const GovernanceLattice = () => {
+  const [webGLSupported, setWebGLSupported] = useState<boolean | null>(null);
+  const [renderError, setRenderError] = useState(false);
+
   useEffect(() => {
-    const timer = setTimeout(() => setShowLattice(true), 500);
-    return () => clearTimeout(timer);
+    // Check WebGL availability on mount (client-side only)
+    setWebGLSupported(isWebGLAvailable());
   }, []);
 
-  // Lightweight 3D parallax (mobile-safe)
-  useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    const handleMove = (e: MouseEvent) => {
-      const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      const rotateX = (y / rect.height - 0.5) * -6;
-      const rotateY = (x / rect.width - 0.5) * 6;
-      el.style.transform = `
-        perspective(900px)
-        rotateX(${rotateX}deg)
-        rotateY(${rotateY}deg)
-        translateZ(12px)
-      `;
-    };
-    const reset = () => {
-      el.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) translateZ(0)";
-    };
-    el.addEventListener("mousemove", handleMove);
-    el.addEventListener("mouseleave", reset);
-    return () => {
-      el.removeEventListener("mousemove", handleMove);
-      el.removeEventListener("mouseleave", reset);
-    };
-  }, []);
-  const containerVariants = {
-    hidden: {
-      opacity: 0
-    },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2
-      }
-    }
-  };
-  const itemVariants = {
-    hidden: {
-      opacity: 0,
-      y: 30
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: [0.25, 0.4, 0.25, 1]
-      }
-    }
-  };
-  return <section className="min-h-[100dvh] flex items-center justify-center relative overflow-hidden pt-16 pb-8 px-4 sm:px-6">
-      {/* WebGL Governance Lattice */}
-      <Suspense fallback={null}>
-        {showLattice && <GovernanceLattice />}
-      </Suspense>
+  // Show nothing during SSR or initial check
+  if (webGLSupported === null) {
+    return null;
+  }
 
-      {/* Ambient gradients */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_hsl(174_72%_50%_/_0.12)_0%,_transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_hsl(220_40%_20%_/_0.4)_0%,_transparent_50%)]" />
+  // Show fallback if WebGL is not supported or if there was a render error
+  if (!webGLSupported || renderError) {
+    return <FallbackLattice />;
+  }
 
-      {/* Grid texture */}
-      <div className="absolute inset-0 opacity-[0.02]" style={{
-      backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px),
-                           linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)`,
-      backgroundSize: "40px 40px"
-    }} />
-
-      <div className="container mx-auto relative z-10">
-        <motion.div ref={cardRef} className="max-w-4xl mx-auto will-change-transform" style={{
-        transformStyle: "preserve-3d"
-      }} variants={containerVariants} initial="hidden" animate="visible">
-          <div className="card-glass rounded-xl sm:rounded-2xl p-5 sm:p-8 md:p-12 backdrop-blur-xl border-border/40">
-            {/* Status */}
-            <motion.div className="flex items-center gap-2 mb-6 sm:mb-8" variants={itemVariants}>
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-              </span>
-              <span className="text-xs sm:text-sm font-mono text-muted-foreground">
-                Available for opportunities
-              </span>
-            </motion.div>
-
-            {/* Name */}
-            <motion.h1 className="font-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-medium tracking-tight mb-4 sm:mb-6 text-foreground" variants={itemVariants}>
-              Inga Kaltak
-            </motion.h1>
-
-            {/* Title */}
-            <motion.div className="text-lg sm:text-xl md:text-2xl text-muted-foreground font-display mb-6 sm:mb-8 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3" variants={itemVariants}>
-              <span className="text-gradient font-medium">Technical Policy Researcher</span>
-              <span className="hidden sm:inline text-border/50">|</span>
-              <span className="text-foreground/80">Applied AI Engineer</span>
-            </motion.div>
-
-            {/* Description */}
-            <motion.p className="text-sm sm:text-base md:text-lg text-muted-foreground max-w-2xl leading-relaxed mb-8 sm:mb-10" variants={itemVariants}>
-              Turning governance frameworks into real, testable systems. 4+ years
-              bridging federal regulatory analysis, public policy research, and
-              LLM-powered tooling across public-sector environments.
-            </motion.p>
-
-            {/* CTAs */}
-            <motion.div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-10" variants={itemVariants}>
-              <a href="mailto:ingakaltak7@gmail.com" className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-5 py-3 text-primary-foreground text-sm font-medium transition-all hover:scale-[1.02] hover:brightness-110 glow-primary">
-                <Mail size={18} />
-                Contact Me
-              </a>
-              <a href="https://www.linkedin.com/in/inga-kaltak" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 px-5 py-3 border border-border text-foreground text-sm font-medium rounded-lg hover:bg-secondary/80 transition-colors">
-                <Linkedin size={18} />
-                LinkedIn
-              </a>
-              <a href="#projects" className="inline-flex items-center justify-center gap-2 px-5 py-3 border border-border text-foreground text-sm font-medium rounded-lg hover:bg-secondary/80 transition-colors">
-                <FileText size={18} />
-                View Work
-              </a>
-            </motion.div>
-
-            {/* Experience */}
-            <motion.div variants={itemVariants}>
-              <p className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-3">
-                Experience with
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {["DoD", "DIA", "DOE", "DLA"].map(org => <span key={org} className="bg-secondary border border-border/50 rounded-md font-mono text-secondary-foreground text-xs px-3 py-1.5">
-                    {org}
-                  </span>)}
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Scroll cue */}
-      <a href="#about" className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 text-muted-foreground hover:text-primary transition-colors animate-float" aria-label="Scroll to about section">
-        <ArrowDown size={20} className="sm:w-6 sm:h-6" />
-      </a>
-    </section>;
+  return (
+    <div className="absolute inset-0 z-0 opacity-60 pointer-events-none">
+      <Canvas
+        camera={{ position: [0, 0, 5], fov: 45 }}
+        gl={{ antialias: true, alpha: true }}
+        style={{ background: "transparent" }}
+        onCreated={(state) => {
+          // Defensive check:  if renderer creation somehow succeeded but context is invalid
+          try {
+            const gl = state.gl. getContext();
+            if (!gl) {
+              console.warn("WebGL context is null, falling back to static display");
+              setRenderError(true);
+            }
+          } catch (error) {
+            console.error("Error during WebGL context validation:", error);
+            setRenderError(true);
+          }
+        }}
+        onError={(error) => {
+          // Catch any errors during Canvas creation/rendering
+          console.error("Three.js Canvas error:", error);
+          setRenderError(true);
+        }}
+      >
+        <ambientLight intensity={0.5} />
+        <LatticeNetwork />
+      </Canvas>
+    </div>
+  );
 };
-export default HeroSection;
+
+export default GovernanceLattice;
