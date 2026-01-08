@@ -39,13 +39,13 @@ const AboutSection = () => {
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 bg-transparent">
             {/* Left column - text */}
             <motion.div className="space-y-4 sm:space-y-6" variants={staggerItemVariants}>
-              <p className="text-base leading-relaxed text-gray-950 sm:text-base">
+              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
                 I'm a policy and applied AI researcher who turns governance frameworks into 
                 real, testable systems. With over 4 years of experience across federal agencies 
                 including DoD, DIA, DOE, and DLA, I specialize in converting compliance mandates 
                 into deployable AI prototypes, dashboards, and security-validated risk controls.
               </p>
-              <p className="text-base leading-relaxed text-slate-950 sm:text-base">
+              <p className="text-base leading-relaxed text-muted-foreground sm:text-lg">
                 My work sits at the intersection of public sector research, regulatory analysis, 
                 and hands-on LLM engineering. I believe in building AI systems that are not just 
                 powerful, but accountable, auditable, and aligned with public interest.
