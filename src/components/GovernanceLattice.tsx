@@ -1,10 +1,10 @@
 "use client";
 import { Canvas, extend, Object3DNode } from "@react-three/fiber";
 import { Float } from "@react-three/drei";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import * as THREE from "three";
 
-// Extend Three.js Line for R3F
+// Extend Three. js Line for R3F
 extend({ Line_: THREE.Line });
 
 declare module "@react-three/fiber" {
@@ -13,7 +13,22 @@ declare module "@react-three/fiber" {
   }
 }
 
-function GovernanceNode({ position }: { position: [number, number, number] }) {
+// Utility to check WebGL availability
+function isWebGLAvailable(): boolean {
+  if (typeof window === "undefined") return false;
+  
+  try {
+    const canvas = document.createElement("canvas");
+    return ! !(
+      window.WebGLRenderingContext &&
+      (canvas.getContext("webgl2") || canvas.getContext("webgl"))
+    );
+  } catch (e) {
+    return false;
+  }
+}
+
+function GovernanceNode({ position }:  { position: [number, number, number] }) {
   return (
     <Float speed={1.5} rotationIntensity={0.3} floatIntensity={0.5}>
       <mesh position={position}>
@@ -79,13 +94,67 @@ function LatticeNetwork() {
   );
 }
 
+// Fallback component for when WebGL is not available
+function FallbackLattice() {
+  return (
+    <div className="absolute inset-0 z-0 opacity-60 pointer-events-none flex items-center justify-center">
+      <svg width="200" height="200" viewBox="0 0 200 200" className="opacity-30">
+        <defs>
+          <pattern id="lattice-pattern" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+            <line x1="0" y1="0" x2="40" y2="40" stroke="#2dd4bf" strokeWidth="0.5" opacity="0.3" />
+            <line x1="40" y1="0" x2="0" y2="40" stroke="#2dd4bf" strokeWidth="0.5" opacity="0.3" />
+          </pattern>
+        </defs>
+        <rect width="200" height="200" fill="url(#lattice-pattern)" />
+        <circle cx="100" cy="100" r="30" fill="none" stroke="#2dd4bf" strokeWidth="1" opacity="0.4" />
+      </svg>
+    </div>
+  );
+}
+
 export const GovernanceLattice = () => {
+  const [webGLSupported, setWebGLSupported] = useState<boolean | null>(null);
+  const [renderError, setRenderError] = useState(false);
+
+  useEffect(() => {
+    // Check WebGL availability on mount (client-side only)
+    setWebGLSupported(isWebGLAvailable());
+  }, []);
+
+  // Show nothing during SSR or initial check
+  if (webGLSupported === null) {
+    return null;
+  }
+
+  // Show fallback if WebGL is not supported or if there was a render error
+  if (!webGLSupported || renderError) {
+    return <FallbackLattice />;
+  }
+
   return (
     <div className="absolute inset-0 z-0 opacity-60 pointer-events-none">
       <Canvas
         camera={{ position: [0, 0, 5], fov: 45 }}
         gl={{ antialias: true, alpha: true }}
         style={{ background: "transparent" }}
+        onCreated={(state) => {
+          // Defensive check:  if renderer creation somehow succeeded but context is invalid
+          try {
+            const gl = state.gl. getContext();
+            if (!gl) {
+              console.warn("WebGL context is null, falling back to static display");
+              setRenderError(true);
+            }
+          } catch (error) {
+            console.error("Error during WebGL context validation:", error);
+            setRenderError(true);
+          }
+        }}
+        onError={(error) => {
+          // Catch any errors during Canvas creation/rendering
+          console.error("Three.js Canvas error:", error);
+          setRenderError(true);
+        }}
       >
         <ambientLight intensity={0.5} />
         <LatticeNetwork />
